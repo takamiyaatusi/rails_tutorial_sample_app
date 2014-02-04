@@ -29,6 +29,8 @@ gem 'coffee-rails', '~> 4.0.0'
 
 end
 
+
+
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
@@ -47,7 +49,7 @@ group :doc do
 end
 
 # Use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
+gem 'bcrypt-ruby','~> 3.1.0'
 
 # Use unicorn as the app server
 # gem 'unicorn'
