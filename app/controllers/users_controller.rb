@@ -2,6 +2,8 @@ class UsersController < ApplicationController
   before_action :signed_in_user, only: [:index, :edit, :update, :destroy]
   before_action :correct_user,   only: [:edit, :update]
   before_action :admin_user,     only: :destroy
+  before_action :already_signed, only: [:new, :create]
+  before_action :protect_from_delete,  only: :destroy
 
   def new
    @user = User.new
@@ -20,6 +22,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    @microposts = @user.microposts.paginate(page: params[:page])
   end
 
   def edit
@@ -39,7 +42,8 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    User.find(params[:id]).destroy
+    @user = User.find(params[:id])
+    @user.destroy
     flash[:success] = "User destroyed."
     redirect_to users_url
   end
@@ -53,20 +57,27 @@ class UsersController < ApplicationController
 
   #before actions
 
-   def signed_in_user
-     unless signed_in?
-        store_location
-        redirect_to signin_url, notice: "Please sign in." unless signed_in?
-     end
-   end
 
    def correct_user
      @user = User.find(params[:id])
      redirect_to(root_path) unless current_user?(@user)
    end
 
-    def admin_user
-      redirect_to(root_path) unless current_user.admin?
-    end
+   def admin_user
+     redirect_to(root_path) unless current_user.admin?
+   end
+
+   def already_signed
+     redirect_to(root_path) if signed_in?
+   end
+
+   def protect_from_delete
+     @user = User.find(params[:id])
+     if @user[:admin]
+      flash[:error] = "管理者は削除できません。"
+      redirect_to users_url
+     end
+   end
+
 
 end
